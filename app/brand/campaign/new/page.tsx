@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Upload, Plus, X, ChevronRight, Info } from "lucide-react";
 
 const categories = ["스킨케어", "메이크업", "선케어", "헤어케어", "바디케어", "향수", "건강/웰니스", "기타"];
-const countries = ["대한민국", "미국", "일본", "중국", "동남아시아", "유럽", "전 세계"];
+const countries = ["미국", "캐나다", "일본", "동남아시아", "중동"];
+const genders = ["여성", "남성", "무관"];
 const ageRanges = ["13-18", "18-24", "25-34", "35-44", "45+"];
 const platforms = ["Instagram", "TikTok", "Twitter"];
 
@@ -18,6 +19,7 @@ export default function NewCampaignPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [selectedAges, setSelectedAges] = useState<string[]>([]);
+  const [selectedGender, setSelectedGender] = useState<string>("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [step, setStep] = useState(1);
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
@@ -222,6 +224,26 @@ export default function NewCampaignPage() {
                         }`}
                       >
                         {age}세
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">타겟 성별</label>
+                  <div className="flex gap-2">
+                    {genders.map((g) => (
+                      <button
+                        key={g}
+                        type="button"
+                        onClick={() => setSelectedGender(g)}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                          selectedGender === g
+                            ? "bg-indigo-600 text-white"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                      >
+                        {g}
                       </button>
                     ))}
                   </div>
