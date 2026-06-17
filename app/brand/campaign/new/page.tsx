@@ -23,10 +23,10 @@ export default function NewCampaignPage() {
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
 
   const budgetOptions = [
-    { label: "20만원", value: "200000", desc: "나노 인플루언서 추천" },
-    { label: "30만원", value: "300000", desc: "마이크로 인플루언서 추천" },
-    { label: "50만원", value: "500000", desc: "미드 인플루언서 추천" },
-    { label: "메가급 500만원 이상", value: "5000000", desc: "메가 / 셀럽 인플루언서" },
+    { label: "20만원", value: "200000", recommended: false },
+    { label: "30만원", value: "300000", recommended: true },
+    { label: "50만원", value: "500000", recommended: false },
+    { label: "메가급 500만원 이상", value: "5000000", recommended: false },
   ];
 
   const addGuideline = () => setGuidelines([...guidelines, ""]);
@@ -294,16 +294,22 @@ export default function NewCampaignPage() {
                         key={opt.value}
                         type="button"
                         onClick={() => setSelectedBudget(opt.value)}
-                        className={`flex flex-col items-start px-4 py-3.5 rounded-xl border-2 text-left transition-all ${
+                        className={`relative flex items-center justify-between px-4 py-3.5 rounded-xl border-2 text-left transition-all ${
                           selectedBudget === opt.value
                             ? "border-indigo-500 bg-indigo-50"
+                            : opt.recommended
+                            ? "border-indigo-300 bg-white hover:border-indigo-400"
                             : "border-slate-200 bg-white hover:border-slate-300"
                         }`}
                       >
                         <span className={`text-base font-bold ${selectedBudget === opt.value ? "text-indigo-700" : "text-slate-900"}`}>
                           {opt.label}
                         </span>
-                        <span className="text-xs text-slate-400 mt-0.5">{opt.desc}</span>
+                        {opt.recommended && (
+                          <span className="animate-pulse text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-500 text-white shrink-0">
+                            추천
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>
