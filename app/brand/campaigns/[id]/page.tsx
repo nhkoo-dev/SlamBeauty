@@ -665,22 +665,52 @@ export default function CampaignDetailPage() {
                 캠페인 일정
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 pt-0">
-              {[
-                { label: "캠페인 생성", date: campaign.createdAt, done: true },
-                { label: "모집 마감", date: campaign.recruitDeadline, done: true },
-                { label: "콘텐츠 마감", date: campaign.contentDeadline, done: false },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div
-                    className={`w-2 h-2 rounded-full shrink-0 ${item.done ? "bg-indigo-500" : "bg-slate-200"}`}
-                  />
-                  <div className="flex-1 flex justify-between text-xs">
-                    <span className={item.done ? "text-slate-700" : "text-slate-400"}>{item.label}</span>
-                    <span className={`font-medium ${item.done ? "text-slate-500" : "text-slate-400"}`}>{item.date}</span>
+            <CardContent className="pt-0">
+              {(() => {
+                const today = new Date().toISOString().split("T")[0];
+                const steps = [
+                  { label: "모집 시작", date: campaign.recruitStartDate },
+                  { label: "모집 마감", date: campaign.recruitDeadline },
+                  { label: "선정 마감", date: (() => {
+                    const d = new Date(campaign.recruitDeadline);
+                    d.setDate(d.getDate() + 1);
+                    return d.toISOString().split("T")[0];
+                  })() },
+                  { label: "배송 날짜", date: campaign.shippingDate },
+                  { label: "콘텐츠 마감", date: campaign.contentDeadline },
+                ];
+                return (
+                  <div className="relative">
+                    {/* 세로 연결선 */}
+                    <div className="absolute left-[7px] top-2 bottom-2 w-px bg-slate-100" />
+                    <div className="space-y-3">
+                      {steps.map((item, i) => {
+                        const isPast = item.date <= today;
+                        const isCurrent = !isPast && (i === 0 || steps[i - 1].date <= today);
+                        return (
+                          <div key={i} className="flex items-center gap-3 relative">
+                            <div className={`w-3.5 h-3.5 rounded-full shrink-0 border-2 z-10 ${
+                              isPast
+                                ? "bg-indigo-500 border-indigo-500"
+                                : isCurrent
+                                ? "bg-white border-indigo-400"
+                                : "bg-white border-slate-200"
+                            }`} />
+                            <div className="flex-1 flex justify-between text-xs">
+                              <span className={isPast || isCurrent ? "text-slate-700 font-medium" : "text-slate-400"}>
+                                {item.label}
+                              </span>
+                              <span className={`font-medium tabular-nums ${isPast ? "text-indigo-600" : isCurrent ? "text-indigo-500" : "text-slate-400"}`}>
+                                {item.date}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })()}
             </CardContent>
           </Card>
 

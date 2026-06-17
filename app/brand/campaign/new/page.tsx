@@ -21,9 +21,13 @@ export default function NewCampaignPage() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [step, setStep] = useState(1);
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
+
+  const today = new Date().toISOString().split("T")[0];
+  const [recruitStartDate] = useState(today);
   const [recruitDeadline, setRecruitDeadline] = useState("");
   const [selectionDeadline, setSelectionDeadline] = useState("");
   const [shippingDate, setShippingDate] = useState("");
+  const [contentDeadline, setContentDeadline] = useState("");
 
   const handleRecruitDeadlineChange = (val: string) => {
     setRecruitDeadline(val);
@@ -33,6 +37,17 @@ export default function NewCampaignPage() {
       setSelectionDeadline(next.toISOString().split("T")[0]);
     } else {
       setSelectionDeadline("");
+    }
+  };
+
+  const handleShippingDateChange = (val: string) => {
+    setShippingDate(val);
+    if (val) {
+      const deadline = new Date(val);
+      deadline.setDate(deadline.getDate() + 14);
+      setContentDeadline(deadline.toISOString().split("T")[0]);
+    } else {
+      setContentDeadline("");
     }
   };
 
@@ -337,43 +352,63 @@ export default function NewCampaignPage() {
                   <label className="block text-sm font-medium text-slate-700 mb-3">캠페인 일정 *</label>
 
                   {/* 흐름 표시 */}
-                  <div className="flex items-center gap-1.5 mb-4 overflow-x-auto pb-1">
-                    {["모집", "선정", "배송", "콘텐츠"].map((step, i) => (
-                      <div key={step} className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 mb-5 overflow-x-auto pb-1">
+                    {["모집 시작", "모집 마감", "선정 마감", "배송", "콘텐츠 마감"].map((label, i) => (
+                      <div key={label} className="flex items-center shrink-0">
                         <div className="flex flex-col items-center">
-                          <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 text-xs font-bold flex items-center justify-center">{i + 1}</div>
-                          <span className="text-[10px] text-slate-400 mt-0.5">{step}</span>
+                          <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">{i + 1}</div>
+                          <span className="text-[10px] text-slate-400 mt-0.5 whitespace-nowrap">{label}</span>
                         </div>
-                        {i < 3 && <div className="w-6 h-px bg-slate-200 mb-3" />}
+                        {i < 4 && <div className="w-5 h-px bg-slate-200 mb-3 mx-0.5" />}
                       </div>
                     ))}
                   </div>
 
                   <div className="space-y-3">
-                    {/* 모집 마감일 */}
+                    {/* 모집 시작일 (오늘, 자동) */}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 mb-1.5">
-                          <span className="inline-flex items-center gap-1">
+                          <span className="inline-flex items-center gap-1.5">
                             <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">1</span>
+                            모집 시작일
+                            <span className="text-[10px] text-indigo-400 font-normal">오늘 자동 설정</span>
+                          </span>
+                        </label>
+                        <Input
+                          type="date"
+                          value={recruitStartDate}
+                          readOnly
+                          className="bg-indigo-50 text-indigo-700 font-medium cursor-not-allowed"
+                        />
+                      </div>
+
+                      {/* 모집 마감일 */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 mb-1.5">
+                          <span className="inline-flex items-center gap-1">
+                            <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">2</span>
                             모집 마감일
                           </span>
                         </label>
                         <Input
                           type="date"
                           value={recruitDeadline}
+                          min={recruitStartDate}
                           onChange={(e) => handleRecruitDeadlineChange(e.target.value)}
                           required
                         />
                       </div>
+                    </div>
 
-                      {/* 인플루언서 선정 마감일 — 자동 설정 */}
+                    {/* 선정 마감일 + 배송 날짜 */}
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 mb-1.5">
                           <span className="inline-flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">2</span>
-                            인플루언서 선정 마감일
-                            <span className="text-[10px] text-indigo-400 font-normal">모집 마감 다음날 자동 설정</span>
+                            <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">3</span>
+                            선정 마감일
+                            <span className="text-[10px] text-indigo-400 font-normal">모집 마감 다음날 자동</span>
                           </span>
                         </label>
                         <Input
@@ -384,32 +419,39 @@ export default function NewCampaignPage() {
                           required
                         />
                       </div>
-                    </div>
-
-                    {/* 배송 날짜 + 콘텐츠 업로드 기한 */}
-                    <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 mb-1.5">
                           <span className="inline-flex items-center gap-1">
-                            <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">3</span>
+                            <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">4</span>
                             배송 날짜
                           </span>
                         </label>
                         <Input
                           type="date"
                           value={shippingDate}
-                          onChange={(e) => setShippingDate(e.target.value)}
+                          onChange={(e) => handleShippingDateChange(e.target.value)}
                           required
                         />
                       </div>
+                    </div>
+
+                    {/* 콘텐츠 업로드 기한 (배송 +2주 자동) */}
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 mb-1.5">
-                          <span className="inline-flex items-center gap-1">
-                            <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">4</span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold flex items-center justify-center">5</span>
                             콘텐츠 업로드 기한
+                            <span className="text-[10px] text-indigo-400 font-normal">배송일 +2주 자동 설정</span>
                           </span>
                         </label>
-                        <Input type="date" required />
+                        <Input
+                          type="date"
+                          value={contentDeadline}
+                          onChange={(e) => setContentDeadline(e.target.value)}
+                          className="bg-indigo-50 text-indigo-700 font-medium"
+                          required
+                        />
                       </div>
                     </div>
                   </div>
