@@ -276,6 +276,7 @@ export type CampaignInfluencer = {
 
 export type BrandCampaign = {
   id: string;
+  brandName: string;
   productName: string;
   category: string;
   description: string;
@@ -286,7 +287,9 @@ export type BrandCampaign = {
   budgetPerInfluencer: number;
   totalBudget: number;
   recruitCount: number;
+  recruitStartDate: string;
   recruitDeadline: string;
+  shippingDate: string;
   contentDeadline: string;
   status: "recruiting" | "in_progress" | "review" | "completed";
   influencers: CampaignInfluencer[];
@@ -297,6 +300,7 @@ export type BrandCampaign = {
 export const dummyBrandCampaigns: BrandCampaign[] = [
   {
     id: "bc_001",
+    brandName: "글로우랩",
     productName: "비타C 브라이트닝 앰플",
     category: "스킨케어",
     description:
@@ -314,7 +318,9 @@ export const dummyBrandCampaigns: BrandCampaign[] = [
     budgetPerInfluencer: 620000,
     totalBudget: 3100000,
     recruitCount: 5,
+    recruitStartDate: "2026-05-20",
     recruitDeadline: "2026-06-10",
+    shippingDate: "2026-06-13",
     contentDeadline: "2026-06-30",
     status: "in_progress",
     createdAt: "2026-05-20",
@@ -347,6 +353,7 @@ export const dummyBrandCampaigns: BrandCampaign[] = [
   },
   {
     id: "bc_002",
+    brandName: "글로우랩",
     productName: "UV 쉴드 선크림 SPF50+",
     category: "선케어",
     description:
@@ -363,7 +370,9 @@ export const dummyBrandCampaigns: BrandCampaign[] = [
     budgetPerInfluencer: 530000,
     totalBudget: 2650000,
     recruitCount: 5,
+    recruitStartDate: "2026-05-10",
     recruitDeadline: "2026-06-05",
+    shippingDate: "2026-06-07",
     contentDeadline: "2026-06-25",
     status: "review",
     createdAt: "2026-05-10",
@@ -410,6 +419,7 @@ export const dummyBrandCampaigns: BrandCampaign[] = [
   },
   {
     id: "bc_003",
+    brandName: "23yearsold",
     productName: "퍼펙트 커버 컨실러",
     category: "메이크업",
     description:
@@ -427,7 +437,9 @@ export const dummyBrandCampaigns: BrandCampaign[] = [
     budgetPerInfluencer: 480000,
     totalBudget: 4800000,
     recruitCount: 10,
+    recruitStartDate: "2026-06-17",
     recruitDeadline: "2026-06-25",
+    shippingDate: "2026-06-26",
     contentDeadline: "2026-07-14",
     status: "recruiting",
     createdAt: "2026-06-17",

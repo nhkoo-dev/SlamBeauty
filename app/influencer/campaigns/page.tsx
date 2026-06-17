@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search, X, Users, Clock, Menu, CheckCircle2, Circle, Send, AlertCircle } from "lucide-react";
+import { Search, X, Users, Clock, Menu, CheckCircle2, Circle, Send, AlertCircle, Calendar, Truck, Package } from "lucide-react";
 import { dummyOpenCampaigns } from "@/lib/dummy-data";
 import { useInfluencerAuth } from "@/lib/use-influencer-auth";
 import { cn } from "@/lib/utils";
@@ -340,20 +340,20 @@ export default function CampaignsPage() {
                   onClick={() => handleCardClick(campaign.id)}
                   className="bg-white rounded-2xl border border-slate-200 hover:border-purple-200 hover:shadow-lg hover:shadow-purple-50 transition-all cursor-pointer overflow-hidden"
                 >
-                  <div className="p-4 sm:p-6">
-                    {/* Card body: stacked on mobile, side-by-side on sm+ */}
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      {/* Product image */}
-                      <div className="sm:w-28 sm:shrink-0">
+                  <div className="p-4 sm:p-5">
+                    <div className="flex gap-4 sm:gap-5 items-start">
+
+                      {/* 맨 왼쪽: 제품 사진 */}
+                      <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-xl overflow-hidden shrink-0">
                         {campaign.productImage ? (
                           <img
                             src={campaign.productImage}
                             alt={campaign.productName}
-                            className="w-full h-44 sm:h-28 sm:w-28 rounded-xl object-cover"
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <div
-                            className="w-full h-32 sm:h-28 sm:w-28 rounded-xl flex items-center justify-center text-white text-xl font-bold"
+                            className="w-full h-full flex items-center justify-center text-white text-xl font-bold"
                             style={{ backgroundColor: campaign.brandLogoColor }}
                           >
                             {campaign.brandLogo}
@@ -361,70 +361,67 @@ export default function CampaignsPage() {
                         )}
                       </div>
 
-                      {/* Content */}
+                      {/* 오른쪽: 정보 */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                          <span className="text-sm font-semibold text-slate-700">{campaign.brandName}</span>
+
+                        {/* 브랜드명 (가장 크게) + 제품명 */}
+                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                          <h2 className="text-lg sm:text-xl font-bold text-slate-900">{campaign.brandName}</h2>
+                          {isApplied && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-medium">지원 완료</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-sm font-semibold text-slate-500">{campaign.productName}</span>
                           <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 font-medium">{campaign.category}</span>
-                          {isApplied && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-medium">지원 완료</span>}
+                          <span className={cn("text-xs font-bold ml-auto", dday <= 3 ? "text-red-600" : dday <= 7 ? "text-amber-600" : "text-emerald-600")}>
+                            {dday <= 0 ? "마감" : `D-${dday}`}
+                          </span>
                         </div>
 
-                        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 leading-snug">{campaign.productName}</h3>
-
-                        {/* Dates — wrap on mobile */}
-                        <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-3 text-xs">
-                          <div>
-                            <span className="text-slate-400">모집 기간</span>
-                            <span className="ml-1.5 font-semibold text-slate-700">
-                              {(campaign as Campaign).recruitStartDate ?? "2026-06-16"} ~ {campaign.deadline}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-slate-400">배송 예정일</span>
-                            <span className="ml-1.5 font-semibold text-slate-700">{(campaign as Campaign).shippingDate ?? "-"}</span>
-                          </div>
-                          <div>
-                            <span className="text-slate-400">콘텐츠 마감</span>
-                            <span className="ml-1.5 font-semibold text-slate-700">{campaign.contentDeadline}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-slate-400" />
-                            <span className={cn("font-bold", dday <= 3 ? "text-red-600" : dday <= 7 ? "text-amber-600" : "text-emerald-600")}>
-                              {dday <= 0 ? "마감" : `D-${dday}`}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Desired conditions */}
-                        {(campaign as Campaign).desiredConditions && (
-                          <div className="mb-3">
-                            <p className="text-xs font-semibold text-slate-500 mb-1.5">희망 조건</p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {((campaign as Campaign).desiredConditions ?? []).map((cond, i) => (
-                                <span key={i} className="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-medium">
-                                  {cond}
-                                </span>
-                              ))}
+                        {/* 핵심 날짜 */}
+                        <div className="grid grid-cols-3 gap-2 mb-3">
+                          <div className="bg-slate-50 rounded-lg px-2.5 py-2">
+                            <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium mb-0.5">
+                              <Calendar className="w-2.5 h-2.5" />모집 기간
+                            </div>
+                            <div className="text-[11px] font-semibold text-slate-800 leading-tight">
+                              {(campaign as Campaign).recruitStartDate ?? "-"} ~<br className="hidden sm:block" /> {campaign.deadline}
                             </div>
                           </div>
-                        )}
+                          <div className="bg-slate-50 rounded-lg px-2.5 py-2">
+                            <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium mb-0.5">
+                              <Truck className="w-2.5 h-2.5" />배송 예정일
+                            </div>
+                            <div className="text-[11px] font-semibold text-slate-800">{(campaign as Campaign).shippingDate ?? "-"}</div>
+                          </div>
+                          <div className="bg-slate-50 rounded-lg px-2.5 py-2">
+                            <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium mb-0.5">
+                              <Package className="w-2.5 h-2.5" />콘텐츠 마감
+                            </div>
+                            <div className="text-[11px] font-semibold text-slate-800">{campaign.contentDeadline}</div>
+                          </div>
+                        </div>
 
-                        {/* Guidelines */}
-                        <div className="mb-4">
-                          <p className="text-xs font-semibold text-slate-500 mb-1.5">콘텐츠 가이드라인</p>
-                          <ul className="space-y-0.5">
+                        {/* 콘텐츠 가이드라인 */}
+                        <div className="mb-3.5">
+                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">콘텐츠 가이드라인</p>
+                          <ul className="space-y-1">
                             {campaign.guidelines.slice(0, 3).map((g, i) => (
                               <li key={i} className="text-xs text-slate-600 flex items-start gap-1.5">
                                 <span className="text-purple-400 shrink-0 mt-0.5">•</span>
                                 <span className="line-clamp-1">{g}</span>
                               </li>
                             ))}
+                            {campaign.guidelines.length > 3 && (
+                              <li className="text-xs text-slate-400">+{campaign.guidelines.length - 3}개 더</li>
+                            )}
                           </ul>
                         </div>
 
-                        {/* Footer */}
-                        <div className="flex items-center justify-between pt-3.5 border-t border-slate-100">
-                          <div className="flex items-center gap-3 sm:gap-4 text-xs text-slate-500">
+                        {/* 하단 */}
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                          <div className="flex items-center gap-3 text-xs text-slate-500">
                             <div className="flex items-center gap-1">
                               <Users className="w-3.5 h-3.5" />
                               <span className="font-semibold text-slate-700">{campaign.currentApplicants}/{campaign.recruitCount}명</span>
